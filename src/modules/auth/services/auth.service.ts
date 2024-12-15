@@ -5,12 +5,14 @@ import { UserEntity } from '../entities/user.entity';
 import { AuthRepository } from '../repositories/auth.repository';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(AuthRepository)
     private readonly authRepository: AuthRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signUp(createUserDto: SignUpUserDto): Promise<UserEntity> {
@@ -18,7 +20,7 @@ export class AuthService {
     return this.authRepository.save(user);
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
+  async login(loginUserDto: LoginUserDto): Promise<string> {
     const user = await this.authRepository.findByEmail(loginUserDto.email);
     if (!user) {
       throw new BadRequestException('Invalid credentials');
@@ -26,8 +28,9 @@ export class AuthService {
     if (user.password !== loginUserDto.password) {
       throw new BadRequestException('Invalid credentials');
     }
-    
-    return user;
+    const { email, id } = user;
+    let accessToken = this.jwtService.sign({ email, user });
+    return accessToken;
   }
 
   async findAllUsers(): Promise<UserEntity[]> {

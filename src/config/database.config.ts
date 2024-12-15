@@ -4,10 +4,10 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 const databaseConfig: TypeOrmModuleOptions = {
   type: 'mssql', // Specify MSSQL as the database type
-  host: 'localhost', // Your SQL Server host
+  host: 'localhost', // Your SQL Server
   port: 1433, // Default port for MSSQL
-  username: '', // Replace with your SQL Server username
-  password: '', // Replace with your password
+  username: 'owais', // Replace with your SQL Server username
+  password: 'owais', // Replace with your password
   database: 'nestjs', // Replace with your database name
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true, // Set to false in production

@@ -1,11 +1,21 @@
-import { Body, Controller, Get, Post } from '@nestjs/common/decorators';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common/decorators';
+import { LoginUserDto } from '../dto/login-user.dto';
 import { SignUpUserDto } from '../dto/signUp-user.dto';
 import { UserEntity } from '../entities/user.entity';
 import { AuthService } from '../services/auth.service';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { Protected } from 'src/common/guards/protected.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
-export class UserController {
+export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
@@ -29,13 +39,29 @@ export class UserController {
   @Post('/login')
   async loginUser(
     @Body() loginUserDto: LoginUserDto,
-  ): Promise<{ user: UserEntity }> {
-    const user = await this.authService.login(loginUserDto);
+  ): Promise<{ user: string }> {
+    try {
+      const user = await this.authService.login(loginUserDto);
 
-    return {
-      user,
-    };
+      return {
+        user,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
+
+  @ApiBearerAuth('JWT')
+  @UseGuards(Protected)
+  @Put(':id')
+  async changePassword(
+    @Param('id') id: number,
+    @Body() changePasswordDto: any,
+  ): Promise<UserEntity> {
+    console.log('hello');
+    return null;
+  }
+
   //   @Put(':id')
   //   async updateUser(
   //     @Param('id') id: number,

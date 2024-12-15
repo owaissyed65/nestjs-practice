@@ -32,28 +32,30 @@ export class ResponseInterceptor<T>
       catchError((err) => {
         const response = context.switchToHttp().getResponse();
 
-        // Determine the status code based on the error
-        const statusCode =
-          err instanceof InternalServerErrorException
-            ? 500
-            : err instanceof NotFoundException
-              ? 404
-              : err instanceof BadRequestException
-                ? 400
-                : 500;
+        // Determine the status code based on the error type
+        let statusCode = 500; // Default to 500 Internal Server Error
+        let message = 'Something went wrong';
 
-        response.status(statusCode); // Set the response status code
-        console.log(err);
-        return throwError(
-          () =>
-            ({
-              data: null,
-              errors: [err.message || 'Something went wrong'],
-              message: 'Request failed',
-              status: statusCode.toString(),
-              isSuccessful: false,
-            }) as ApiResponseDto<T>,
-        );
+        if (err instanceof BadRequestException) {
+          statusCode = 400;
+          message = err.message || 'Invalid request';
+        } else if (err instanceof NotFoundException) {
+          statusCode = 404;
+          message = err.message || 'Resource not found';
+        } else if (err instanceof InternalServerErrorException) {
+          statusCode = 500;
+          message = err.message || 'Internal server error';
+        }
+
+        response.status(statusCode).json({
+          data: null,
+          errors: [message],
+          message: 'Request failed',
+          status: statusCode.toString(),
+          isSuccessful: false,
+        });
+
+        return throwError(() => err); // Re-throw the error after handling it
       }),
     );
   }
