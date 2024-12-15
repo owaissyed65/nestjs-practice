@@ -1,0 +1,15 @@
+{
+  "type": "mssql",
+  "host": "localhost",
+  "port": 1433,
+  "username": "owais",
+  "password": "owais",
+  "database": "nestjs_demo",
+  "synchronize": false,
+  "logging": true,
+  "entities": ["src/**/*.entity{.ts,.js}"],
+  "migrations": ["src/migrations/*{.ts,.js}"],
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}
