@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from './config/app.config';
 import { databaseConfig } from './config/database.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { MusicModule } from './modules/music/music.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,6 +22,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
 
     AuthModule,
+    MusicModule,
   ],
 })
 export class AppModule {}
