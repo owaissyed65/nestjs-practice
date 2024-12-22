@@ -61,12 +61,4 @@ export class AuthController {
     console.log('hello');
     return null;
   }
-
-  //   @Put(':id')
-  //   async updateUser(
-  //     @Param('id') id: number,
-  //     @Body() updateUserDto: UpdateUserDto,
-  //   ): Promise<UserEntity> {
-  //     return this.userService.updateUser(id, updateUserDto);
-  //   }
 }

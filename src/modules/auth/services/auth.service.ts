@@ -1,23 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common/decorators';
+import { Injectable } from '@nestjs/common/decorators';
+import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
+
 import { SignUpUserDto } from '../dto/signUp-user.dto';
 import { UserEntity } from '../entities/user.entity';
 import { AuthRepository } from '../repositories/auth.repository';
 import { LoginUserDto } from '../dto/login-user.dto';
-import { BadRequestException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { IAuthRepository } from '../repositories/i-auth.repository';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(AuthRepository)
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
+    // private readonly configService: ConfigService,
   ) {}
 
   async signUp(createUserDto: SignUpUserDto): Promise<UserEntity> {
-    const user = this.authRepository.create(createUserDto);
-    return this.authRepository.save(user);
+    const user = await this.authRepository.createUser(createUserDto);
+    return user;
   }
 
   async login(loginUserDto: LoginUserDto): Promise<string> {
@@ -34,12 +37,7 @@ export class AuthService {
   }
 
   async findAllUsers(): Promise<UserEntity[]> {
-    const user = await this.authRepository.find();
-    return user;
+    const users = await this.authRepository.findAllUsers();
+    return users;
   }
-
-  //   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-  //     await this.authRepository.update(id, updateUserDto);
-  //     return this.userRepository.findOne(id);
-  //   }
 }
